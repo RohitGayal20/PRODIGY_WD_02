@@ -18,7 +18,7 @@ A simple and elegant stopwatch built using **HTML**, **CSS**, and **JavaScript**
 
 - HTML5
 - CSS3
-- JavaScript (Vanilla)
+- JavaScript
 
 ---
 
