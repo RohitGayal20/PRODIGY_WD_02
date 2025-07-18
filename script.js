@@ -1,51 +1,41 @@
-let timer;
-let [hours, minutes, seconds] = [0, 0, 0];
-let running = false;
+let startTime, elapsedTime = 0, timerInterval;
+const display = document.getElementById("display");
+const laps = document.getElementById("laps");
 
-function updateDisplay() {
-  const h = String(hours).padStart(2, '0');
-  const m = String(minutes).padStart(2, '0');
-  const s = String(seconds).padStart(2, '0');
-  document.getElementById('display').innerText = `${h}:${m}:${s}`;
+function formatTime(ms) {
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+  const seconds = String(totalSeconds % 60).padStart(2, '0');
+  const milliseconds = String(ms % 1000).padStart(3, '0').slice(0, 2);
+  return `${minutes}:${seconds}:${milliseconds}`;
 }
 
-function start() {
-  if (!running) {
-    running = true;
-    timer = setInterval(() => {
-      seconds++;
-      if (seconds === 60) {
-        seconds = 0;
-        minutes++;
-      }
-      if (minutes === 60) {
-        minutes = 0;
-        hours++;
-      }
-      updateDisplay();
-    }, 1000);
-  }
+function startTimer() {
+  startTime = Date.now() - elapsedTime;
+  timerInterval = setInterval(() => {
+    elapsedTime = Date.now() - startTime;
+    display.textContent = formatTime(elapsedTime);
+  }, 10);
 }
 
-function pause() {
-  clearInterval(timer);
-  running = false;
+function stopTimer() {
+  clearInterval(timerInterval);
 }
 
-function reset() {
-  clearInterval(timer);
-  [hours, minutes, seconds] = [0, 0, 0];
-  running = false;
-  updateDisplay();
-  document.getElementById('laps').innerHTML = '';
+function resetTimer() {
+  clearInterval(timerInterval);
+  elapsedTime = 0;
+  display.textContent = "00:00:00";
+  laps.innerHTML = "";
 }
 
-function lap() {
-  if (running) {
-    const lapTime = document.createElement('li');
-    lapTime.textContent = document.getElementById('display').innerText;
-    document.getElementById('laps').appendChild(lapTime);
-  }
+function recordLap() {
+  const li = document.createElement("li");
+  li.textContent = formatTime(elapsedTime);
+  laps.appendChild(li);
 }
 
-updateDisplay(); 
+document.getElementById("start").addEventListener("click", startTimer);
+document.getElementById("stop").addEventListener("click", stopTimer);
+document.getElementById("reset").addEventListener("click", resetTimer);
+document.getElementById("lap").addEventListener("click", recordLap);
